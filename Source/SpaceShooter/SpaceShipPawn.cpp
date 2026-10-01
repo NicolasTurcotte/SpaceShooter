@@ -9,6 +9,7 @@
 #include "InputActionValue.h"
 #include "InputMappingContext.h"
 #include "InputAction.h"
+#include "Projectile.h"
 
 // Sets default values
 ASpaceShipPawn::ASpaceShipPawn()
@@ -73,7 +74,18 @@ void ASpaceShipPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 				&ASpaceShipPawn::Move
 			);
 		}
+		
+		if (ShootAction)
+		{
+			EnhancedInput->BindAction(
+				ShootAction,
+				ETriggerEvent::Started,
+				this,
+				&ASpaceShipPawn::Shoot
+			);
+		}
 	}
+	
 }
 
 void ASpaceShipPawn::Move(const FInputActionValue& Value)
@@ -87,4 +99,26 @@ void ASpaceShipPawn::Move(const FInputActionValue& Value)
 	);
 
 	AddActorWorldOffset(Direction * MoveSpeed * GetWorld()->GetDeltaSeconds(), true);
+}
+
+void ASpaceShipPawn::Shoot()
+{
+	if (!ProjectileClass)
+	{
+		return;
+	}
+
+	const FVector SpawnLocation = GetActorLocation() + GetActorForwardVector() * 100.0f;
+	const FRotator SpawnRotation = GetActorRotation();
+
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.Owner = this;
+	SpawnParams.Instigator = this;
+
+	GetWorld()->SpawnActor<AProjectile>(
+		ProjectileClass,
+		SpawnLocation,
+		SpawnRotation,
+		SpawnParams
+	);
 }

@@ -9,6 +9,7 @@
 class UInputMappingContext;
 class UInputAction;
 struct FInputActionValue;
+class AProjectile;
 
 UCLASS()
 class SPACESHOOTER_API ASpaceShipPawn : public APawn
@@ -39,6 +40,14 @@ protected:
 	float MoveSpeed = 800.0f;
 
 	void Move(const FInputActionValue& Value);
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
+	UInputAction* ShootAction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Combat")
+	TSubclassOf<AProjectile> ProjectileClass;
+
+	void Shoot();
 
 public:	
 	// Called every frame
