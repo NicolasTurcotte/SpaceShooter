@@ -23,3 +23,5 @@ Thumbs.db
 
 # Visual Studio solution
 *.slnx
+
+p4config.txt
