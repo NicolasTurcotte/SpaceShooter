@@ -10,6 +10,7 @@
 #include "InputMappingContext.h"
 #include "InputAction.h"
 #include "Projectile.h"
+#include "Components/SceneComponent.h"
 
 // Sets default values
 ASpaceShipPawn::ASpaceShipPawn()
@@ -54,6 +55,11 @@ void ASpaceShipPawn::BeginPlay()
 void ASpaceShipPawn::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	
+	AddActorWorldOffset(
+		CurrentVelocity * DeltaTime,
+		true
+	);
 
 }
 
@@ -65,13 +71,23 @@ void ASpaceShipPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	if (UEnhancedInputComponent* EnhancedInput =
 		Cast<UEnhancedInputComponent>(PlayerInputComponent))
 	{
-		if (MoveAction)
+		if (MoveForwardAction)
 		{
 			EnhancedInput->BindAction(
-				MoveAction,
+				MoveForwardAction,
 				ETriggerEvent::Triggered,
 				this,
-				&ASpaceShipPawn::Move
+				&ASpaceShipPawn::MoveForward
+			);
+		}
+
+		if (TurnAction)
+		{
+			EnhancedInput->BindAction(
+				TurnAction,
+				ETriggerEvent::Triggered,
+				this,
+				&ASpaceShipPawn::Turn
 			);
 		}
 		
@@ -88,19 +104,38 @@ void ASpaceShipPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	
 }
 
-void ASpaceShipPawn::Move(const FInputActionValue& Value)
+void ASpaceShipPawn::MoveForward(const FInputActionValue& Value)
 {
-	const FVector2D Movement = Value.Get<FVector2D>();
+	const float InputValue = Value.Get<float>();
 
-	const FVector Direction(
-		Movement.Y,
-		Movement.X,
-		0.0f
-	);
+	if (FMath::IsNearlyZero(InputValue))
+	{
+		return;
+	}
 
-	AddActorWorldOffset(
-		Direction * MoveSpeed * GetWorld()->GetDeltaSeconds(),
-		true
+	CurrentVelocity +=
+		GetActorForwardVector()
+		* InputValue
+		* ThrustAcceleration
+		* GetWorld()->GetDeltaSeconds();
+
+	CurrentVelocity = CurrentVelocity.GetClampedToMaxSize(MaxSpeed);
+}
+
+void ASpaceShipPawn::Turn(const FInputActionValue& Value)
+{
+	const float InputValue = Value.Get<float>();
+
+	if (FMath::IsNearlyZero(InputValue))
+	{
+		return;
+	}
+
+	const float RotationAmount =
+		InputValue * TurnSpeed * GetWorld()->GetDeltaSeconds();
+
+	AddActorLocalRotation(
+		FRotator(0.0f, RotationAmount, 0.0f)
 	);
 }
 

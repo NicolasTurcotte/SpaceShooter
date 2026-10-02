@@ -34,12 +34,19 @@ protected:
 	UInputMappingContext* InputMappingContext;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
-	UInputAction* MoveAction;
+	UInputAction* MoveForwardAction;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
+	UInputAction* TurnAction;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Movement")
 	float MoveSpeed = 800.0f;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Movement")
+	float TurnSpeed = 120.0f;
 
-	void Move(const FInputActionValue& Value);
+	void MoveForward(const FInputActionValue& Value);
+	void Turn(const FInputActionValue& Value);
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
 	UInputAction* ShootAction;
@@ -54,6 +61,14 @@ protected:
 	
 	UPROPERTY(BlueprintReadOnly, Category = "Player")
 	int32 Score = 0;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Movement")
+	float ThrustAcceleration = 700.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Movement")
+	float MaxSpeed = 1200.0f;
+
+	FVector CurrentVelocity = FVector::ZeroVector;
 
 public:	
 	// Called every frame

@@ -22,8 +22,8 @@ AAsteroid::AAsteroid()
 	);
 
 	MovementComponent = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("MovementComponent"));
-	MovementComponent->InitialSpeed = 400.0f;
-	MovementComponent->MaxSpeed = 400.0f;
+	MovementComponent->InitialSpeed = 200.0f;
+	MovementComponent->MaxSpeed = 200.0f;
 	MovementComponent->ProjectileGravityScale = 0.0f;
 
 	InitialLifeSpan = 10.0f;
@@ -81,7 +81,7 @@ void AAsteroid::OnAsteroidOverlap(
 				}
 			}
 
-			Destroy();
+			PlayDestroyEffect();
 		}
 	}
 	

@@ -44,6 +44,9 @@ protected:
 		bool bFromSweep,
 		const FHitResult& SweepResult
 	);
+	
+	UFUNCTION(BlueprintImplementableEvent, Category = "Effects")
+	void PlayDestroyEffect();
 
 public:	
 	// Called every frame
