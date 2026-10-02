@@ -3,6 +3,8 @@
 
 #include "Asteroid.h"
 #include "Kismet/GameplayStatics.h"
+#include "Projectile.h"
+#include "SpaceShipPawn.h"
 
 // Sets default values
 AAsteroid::AAsteroid()
@@ -12,6 +14,12 @@ AAsteroid::AAsteroid()
 	
 	AsteroidMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("AsteroidMesh"));
 	RootComponent = AsteroidMesh;
+	
+	AsteroidMesh->SetGenerateOverlapEvents(true);
+	AsteroidMesh->OnComponentBeginOverlap.AddDynamic(
+		this,
+		&AAsteroid::OnAsteroidOverlap
+	);
 
 	MovementComponent = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("MovementComponent"));
 	MovementComponent->InitialSpeed = 400.0f;
@@ -26,6 +34,8 @@ AAsteroid::AAsteroid()
 void AAsteroid::BeginPlay()
 {
 	Super::BeginPlay();
+	
+	HitsRemaining = FMath::RandRange(MinHitsToDestroy, MaxHitsToDestroy);
 	
 	APawn* PlayerPawn = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
 
@@ -46,3 +56,38 @@ void AAsteroid::Tick(float DeltaTime)
 
 }
 
+void AAsteroid::OnAsteroidOverlap(
+	UPrimitiveComponent* OverlappedComponent,
+	AActor* OtherActor,
+	UPrimitiveComponent* OtherComp,
+	int32 OtherBodyIndex,
+	bool bFromSweep,
+	const FHitResult& SweepResult
+)
+{
+	if (AProjectile* Projectile = Cast<AProjectile>(OtherActor))
+	{
+		Projectile->Destroy();
+
+		HitsRemaining--;
+
+		if (HitsRemaining <= 0)
+		{
+			if (APawn* PlayerPawn = UGameplayStatics::GetPlayerPawn(GetWorld(), 0))
+			{
+				if (ASpaceShipPawn* Player = Cast<ASpaceShipPawn>(PlayerPawn))
+				{
+					Player->AddScore(100);
+				}
+			}
+
+			Destroy();
+		}
+	}
+	
+	if (ASpaceShipPawn* Player = Cast<ASpaceShipPawn>(OtherActor))
+	{
+		Player->LoseLife();
+		Destroy();
+	}
+}

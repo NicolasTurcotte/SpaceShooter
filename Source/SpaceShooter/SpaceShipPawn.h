@@ -48,6 +48,12 @@ protected:
 	TSubclassOf<AProjectile> ProjectileClass;
 
 	void Shoot();
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Player")
+	int32 Lives = 3;
+	
+	UPROPERTY(BlueprintReadOnly, Category = "Player")
+	int32 Score = 0;
 
 public:	
 	// Called every frame
@@ -56,4 +62,6 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	void LoseLife();
+	void AddScore(int32 Amount);
 };

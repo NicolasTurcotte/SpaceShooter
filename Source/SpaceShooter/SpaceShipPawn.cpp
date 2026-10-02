@@ -125,3 +125,18 @@ void ASpaceShipPawn::Shoot()
 		SpawnParams
 	);
 }
+
+void ASpaceShipPawn::LoseLife()
+{
+	Lives--;
+
+	if (Lives <= 0)
+	{
+		Destroy();
+	}
+}
+
+void ASpaceShipPawn::AddScore(int32 Amount)
+{
+	Score += Amount;
+}

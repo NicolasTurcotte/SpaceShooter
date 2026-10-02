@@ -25,16 +25,6 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Wrap")
 	AActor* TargetActor;
 
-	UFUNCTION()
-	void OnTriggerBeginOverlap(
-		UPrimitiveComponent* OverlappedComponent,
-		AActor* OtherActor,
-		UPrimitiveComponent* OtherComp,
-		int32 OtherBodyIndex,
-		bool bFromSweep,
-		const FHitResult& SweepResult
-	);
-
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
