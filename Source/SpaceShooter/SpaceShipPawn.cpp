@@ -98,7 +98,10 @@ void ASpaceShipPawn::Move(const FInputActionValue& Value)
 		0.0f
 	);
 
-	AddActorWorldOffset(Direction * MoveSpeed * GetWorld()->GetDeltaSeconds(), true);
+	AddActorWorldOffset(
+		Direction * MoveSpeed * GetWorld()->GetDeltaSeconds(),
+		true
+	);
 }
 
 void ASpaceShipPawn::Shoot()
